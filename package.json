@@ -1,0 +1,31 @@
+{
+  "name": "caching",
+  "version": "0.0.1",
+  "description": "module for caching solutions",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skazska/caching.git"
+  },
+  "keywords": [
+    "cache"
+  ],
+  "author": "Said Karimov",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/skazska/caching/issues"
+  },
+  "homepage": "https://github.com/skazska/caching#readme",
+  "dependencies": {
+    "async": "^2.1.5",
+    "aws-sdk": "^2.28.0",
+    "redis": "^2.7.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
