@@ -10,6 +10,10 @@ const
     Redis = require("redis"),
     defaultConfig = {"return_buffers": true};
 
+/**
+ * Class, representing Redis cache storage
+ * @extends Storage
+ */
 class RedisStorage extends Storage {
 
     _defineSet () {
@@ -17,7 +21,7 @@ class RedisStorage extends Storage {
             try {
                 let info = await this.info('server');
                 let ver = /redis_version:([0-9.]+)/.exec(info);
-                resolve(ver && ver[1] >= '2.6.12') //'2.6.12'
+                resolve(ver && ver[1] >= '2.6.12')
             } catch(e) {
                 reject(e); // 30
             }

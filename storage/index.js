@@ -1,15 +1,40 @@
 /**
  * Created by ska on 3/3/17.
  */
-const EventEmitter = require('events').EventEmitter;
+//const EventEmitter = require('events').EventEmitter;
 
-class Storage { //extends EventEmitter {
+/**
+ * @callback PromiseWrappedFunction
+ * @param fn {NodeJSCallback}
+ */
+
+/**
+ * @callback NodeJSCallback
+ * @param err {error} error instance
+ * @param result {*} return data
+ */
+
+/**
+ * Class representing abstract cache storage
+ * @abstract
+ */
+class Storage {
+    /**
+     * Creates storage
+     * @param {string} [cacheId] -  string to be used by storage implementation as logical separator for different caches in one storage
+     * @param {object} [options] - options hash to be used by storage implementation
+     */
     constructor (cacheId, options) {
         //super();
         this.cacheId = cacheId;
         this.options = options;
     }
 
+    /**
+     * returns an instance of Promise wrapper of node callback style function
+     * @param {PromiseWrappedFunction} fn
+     * @returns {Promise}
+     */
     static promiseOf (fn){
         return new Promise((resolve, reject) => {
             fn(function(err, ...res){
@@ -19,70 +44,51 @@ class Storage { //extends EventEmitter {
         });
     }
 
-    /*
-    _error (...args) {
-        this.emit('error', args);
-    }
-    _initialized (...args) {
-        this.emit('initialized', args);
-    }
-
-    _connected (...args) {
-        this.emit('connected', args);
-    }
-
-    _disconnected (...args) {
-        this.emit('disconnected', args);
-    }
-
-    _end (...args) {
-        this.emit('end', args);
-    }
-
-    _dispatchStorageEvent(storage, storageEvent, event) {
-        const self = this;
-        if (typeof event !== 'string') return false;
-        let methodName = '_'+event;
-        if (typeof self[methodName] !== 'function') return false;
-        storage.on(storageEvent, function(...args){
-            self[methodName].apply(self, [this].concat(args));
-        });
-        return true;
-    }
-
-    _dispatchStorageEvents(storage, events) {
-        let list = events;
-        if (typeof events === 'string') list = events.split(',').map(def => {
-           def = def.trim();
-           let sides = def.split('->');
-           return {event: sides[0], storageEvent: sides[1]||sides[0]};
-        });
-        if (typeof list.forEach !== 'function') return false;
-        let res = [];
-        list.forEach(item => {
-            if (this._dispatchStorageEvent(storage, item.storageEvent, item.event)) res.push(item);
-        });
-        return res;
-    }
-
-    */
-
     _emptyMethod () {
         return Promise.reject(new Error('Method is not implemented'));
     }
 
+    /**
+     * put data identified by key to storage
+     * @abstract
+     * @param {string} key
+     * @param {*} data
+     * @param {object} options
+     * @returns {Promise}
+     */
     put (key, data, options) {
         return this._emptyMethod();
     }
 
+    /**
+     * get stored data by key
+     * @abstract
+     * @param {string} key
+     * @param {object} options
+     * @returns {Promise}
+     */
     get (key, options) {
         return this._emptyMethod();
     }
 
+    /**
+     * check if storage contains any data with key
+     * @abstract
+     * @param {string} key
+     * @param {object} options
+     * @returns {Promise}
+     */
     check (key, options) {
         return this._emptyMethod();
     }
 
+    /**
+     * removes stored data by key
+     * @abstract
+     * @param {string} key
+     * @param {object} options
+     * @returns {Promise}
+     */
     remove (key, options) {
         return this._emptyMethod();
     }

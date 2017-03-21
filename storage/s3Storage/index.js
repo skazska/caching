@@ -10,8 +10,12 @@ const
 
 let defaultConfig = {
 
-}
+};
 
+/**
+ * Class, representing s3 cache storage
+ * @extends Storage
+ */
 class S3Storage extends Storage {
     constructor (cacheId, options, config){
         super(cacheId, options);
