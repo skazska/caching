@@ -12,7 +12,7 @@ works with:
 * aws s3
 * redis
 
-## Usage (Redis)
+**Usage (Redis)**
 ```javascript
     Storage = require('@skazska/caching');
     redisCfg = {db: 15},
@@ -26,7 +26,7 @@ works with:
         }
     }
 ```
-## Usage (S3)
+**Usage (S3)**
 ```javascript
     Storage = require('@skazska/caching');
     s3Cfg = {
