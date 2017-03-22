@@ -13,6 +13,7 @@ works with:
 * redis
 
 ##Usage (Redis)
+
     Storage = require('@skazska/caching');
     redisCfg = {db: 15},
     const cache = new Storage.Redis('cacheId-ToDo(no meaning now)', {ttl: 5000/*default options*/}, redisCfg);
@@ -26,6 +27,7 @@ works with:
     }
     
 ##Usage (S3)
+
     Storage = require('@skazska/caching');
     s3Cfg = {
         "accessKeyId": "AWSACCESSKEY1",
