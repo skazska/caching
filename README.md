@@ -12,8 +12,8 @@ works with:
 * aws s3
 * redis
 
-##Usage (Redis)
-
+## Usage (Redis)
+```javascript
     Storage = require('@skazska/caching');
     redisCfg = {db: 15},
     const cache = new Storage.Redis('cacheId-ToDo(no meaning now)', {ttl: 5000/*default options*/}, redisCfg);
@@ -25,9 +25,9 @@ works with:
             console.error(e);
         }
     }
-    
-##Usage (S3)
-
+```
+## Usage (S3)
+```javascript
     Storage = require('@skazska/caching');
     s3Cfg = {
         "accessKeyId": "AWSACCESSKEY1",
@@ -43,3 +43,4 @@ works with:
             console.error(e);
         }
     }
+```
