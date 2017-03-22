@@ -36,6 +36,9 @@ class RedisStorage extends Storage {
                 args.push('PX');
                 args.push(options.ttl);
             }
+            if (options.ifNotExists) {
+                args.push('NX');
+            }
             if (options.ifExists) {
                 args.push('XX');
             }
@@ -53,6 +56,17 @@ class RedisStorage extends Storage {
                     }
                     next(null, 'OK');
                 });
+            } else if (options.ifExists) {
+                return next(new Error('ifExists is not supported by redis < 2.6.12'));
+                /* TODO emulation by revert handling of setnx try
+                this.redis.send_command('setnx', [key, data], (err, res) => {
+                    if (err) return next(err);
+                    if (options.ttl) {
+                        if (res) return this.redis.send_command('pexpire', [key, options.ttl], next);
+                    }
+                    next(null, 'OK');
+                });
+                */
             } else if (options.ttl) {
                 this.redis.send_command('psetex', [key, options.ttl, data], next);
             } else {
