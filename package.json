@@ -20,7 +20,7 @@
     "s3"
   ],
   "author": "Said Karimov <skazska@gmail.com>",
-  "license": "MIT License",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/skazska/caching/issues"
   },
