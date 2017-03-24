@@ -15,7 +15,7 @@ works with:
 **Usage (Redis)**
 ```javascript
     Storage = require('@skazska/caching');
-    redisCfg = {db: 15},
+    redisCfg = {db: 15};
     const cache = new Storage.Redis('cacheId-ToDo(no meaning now)', {ttl: 5000/*default options*/}, redisCfg);
     async function test() {
         try {
@@ -33,7 +33,7 @@ works with:
         "accessKeyId": "AWSACCESSKEY1",
         "secretAccessKey": "aws435secret4264key32526",
         "region": "aws-region"
-    },
+    };
     const cache = new Storage.S3('cacheId-ToDo(no meaning now)', {Bucket: 'bucketName'}, s3Cfg);
     async function test() {
         try {
