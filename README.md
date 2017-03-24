@@ -1,6 +1,7 @@
 **this is a pre-alpha**
 
 Caching is to use s3 or redis storage services to cache data by key.
+(Node 7.7.2 or higher is required, using ES 2017 builtin features)
 
 Supports methods:
 * put - stores data by key
