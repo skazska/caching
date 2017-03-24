@@ -1,6 +1,6 @@
 {
   "name": "@skazska/caching",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "module for caching solutions",
   "main": "index.js",
   "engines": {
