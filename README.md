@@ -9,6 +9,9 @@ Supports methods:
 * check - check if key has data in storage
 * remove - removes data by key
 
+Static helper method:
+* Storage.promiseOf - return promise of function with nodejs callback
+
 works with:
 * aws s3
 * redis

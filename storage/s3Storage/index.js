@@ -13,6 +13,23 @@ let defaultConfig = {
 };
 
 /**
+ * function returning promise of s3 response with result converted to {Storage.result}<-TODO
+ * @param fn {function} - an s3 method
+ * @param params
+ * @returns {Promise}
+ */
+function promiseOfs3Response (fn) {
+    return Storage.promiseOf(
+        fn,
+        function (resolveArgs) {
+            if (resolveArgs && resolveArgs.length)
+            return [ Storage.result(true, resolveArgs[0], resolveArgs[0].Body) ];
+        }
+    );
+}
+
+
+/**
  * Class, representing s3 cache storage
  * @extends Storage
  */
@@ -36,7 +53,7 @@ class S3Storage extends Storage {
 
     put (key, data, options) {
         let params = {
-            Bucket: options.Bucket || this.bucket,
+            Bucket: this.bucket,
             Key: key, /* required */
             ACL: 'private', //'private | public-read | public-read-write | authenticated-read | aws-exec-read | bucket-owner-read | bucket-owner-full-control',
             Body: data //new Buffer('...') || 'STRING_VALUE' || streamObject,
@@ -68,12 +85,12 @@ class S3Storage extends Storage {
         };
         //TODO convert options
         Object.assign(params, options);
-        return Storage.promiseOf(this.s3.putObject.bind(this.s3, params));
+        return promiseOfs3Response(this.s3.putObject.bind(this.s3, params));
     };
 
-    get (key, options, next) {
+    get (key, options) {
         let params = {
-            Bucket: options.Bucket || this.bucket,
+            Bucket: this.bucket,
             Key: key /* required */
             //IfMatch: 'STRING_VALUE',
             //IfModifiedSince: new Date || 'Wed Dec 31 1969 16:00:00 GMT-0800 (PST)' || 123456789,
@@ -93,11 +110,11 @@ class S3Storage extends Storage {
             //SSECustomerKeyMD5: 'STRING_VALUE',
             //VersionId: 'STRING_VALUE'
         };
-        if (options.Bucket) params.Bucket = options.Bucket;
 
         //TODO convert options
         Object.assign(params, options);
-        return Storage.promiseOf(this.s3.getObject.bind(this.s3, params));
+        return promiseOfs3Response(this.s3.getObject.bind(this.s3, params));
+
         /*
         var stream = s3.getObject(params).createReadStream();
 
@@ -115,25 +132,24 @@ class S3Storage extends Storage {
         return stream;
         */
     };
-    check (key, options, next) {
+    check (key, options) {
         let params = {
-            Bucket: options.Bucket || this.bucket,
+            Bucket: this.bucket,
             Key: key //'STRING_VALUE', // required
             //VersionId: 'STRING_VALUE'
         };
-        if (options.Bucket) params.Bucket = options.Bucket;
-        return Storage.promiseOf(this.s3.headObject.bind(this.s3, params));
+        //if (options.Bucket) params.Bucket = options.Bucket;
+        return promiseOfs3Response(this.s3.headObject.bind(this.s3, params));
     };
-    remove (key, options, next) {
+    remove (key, options) {
         let params = {
-            Bucket: options.Bucket || this.bucket,
+            Bucket: this.bucket,
             Key: key //'STRING_VALUE', /* required */
             //MFA: 'STRING_VALUE',
             //RequestPayer: 'requester',
             //VersionId: 'STRING_VALUE'
         };
-        if (options.Bucket) params.Bucket = options.Bucket;
-        return Storage.promiseOf(this.s3.deleteObject.bind(this.s3, params));
+        return promiseOfs3Response(this.s3.deleteObject.bind(this.s3, params));
     };
 }
 

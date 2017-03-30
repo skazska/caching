@@ -10,6 +10,23 @@ const
     Redis = require("redis"),
     defaultConfig = {"return_buffers": true};
 
+
+/**
+ * function returning promise of redis response with result converted to {Storage.result}<-TODO
+ * @param fn {function} - an s3 method
+ * @param params
+ * @returns {Promise}
+ */
+function promiseOfredisResponse (fn) {
+    return Storage.promiseOf(
+        fn,
+        function (resolveArgs) {
+            if (resolveArgs && resolveArgs.length)
+                return [ Storage.result(true, resolveArgs[0], resolveArgs[0].toString()) ];
+        }
+    );
+}
+
 /**
  * Class, representing Redis cache storage
  * @extends Storage
@@ -30,7 +47,8 @@ class RedisStorage extends Storage {
     }
 
     _setNew (key, data, options) {
-        return Storage.promiseOf((next) => {
+        return promiseOfredisResponse((next) => {
+//        return Storage.promiseOf((next) => {
             let args = [key, data];
             if (options.ttl) {
                 args.push('PX');
@@ -47,7 +65,8 @@ class RedisStorage extends Storage {
     }
 
     _setOld (key, data, options) {
-        return Storage.promiseOf((next) => {
+        return promiseOfredisResponse((next) => {
+//        return Storage.promiseOf((next) => {
             if (options.ifNotExists) {
                 this.redis.send_command('setnx', [key, data], (err, res) => {
                     if (err) return next(err);
@@ -123,22 +142,31 @@ class RedisStorage extends Storage {
         });
     }
 
-    get (key, options, next) {
+    get (key, options) {
+        return promiseOfredisResponse(this.redis.get.bind(this.redis, key));
+        /*
         return Storage.promiseOf((next)=>{
             this.redis.get(key, next);
         });
+        */
     }
 
-    check (key, options, next) {
+    check (key, options) {
+        return promiseOfredisResponse(this.redis.exists.bind(this.redis, key));
+        /*
         return Storage.promiseOf((next)=> {
             this.redis.exists(key, next);
         });
+        */
     }
 
-    remove (key, options, next) {
+    remove (key, options) {
+        return promiseOfredisResponse(this.redis.del.bind(this.redis, key));
+        /*
         return Storage.promiseOf((next)=> {
             this.redis.del(key, next);
         });
+        */
     }
 }
 

@@ -67,26 +67,29 @@ describe("s3 storage", function() {
         let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.put('testKey', data, {});
-        result.should.have.property('ETag', '"eb733a00c0c9d336e65691a37ab54293"');
+        result.should.have.property('succeed', true);
+        result.storageResponse.should.have.property('ETag', '"eb733a00c0c9d336e65691a37ab54293"');
     });
     
     it('get able to get data to s3 bucket', async() => {
         let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.get('testKey', {});
-        result.should.ownProperty('Body');
-        should.equal(result.Body.toString(), 'test data');
+        result.should.have.property('succeed', true);
+        result.storageResponse.should.ownProperty('Body');
+        should.equal(result.data.toString(), 'test data');
     });
     it('check able to check if key exists in s3 bucket', async() => {
         //let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.check('testKey', {});
-        result.should.have.property('ETag','"eb733a00c0c9d336e65691a37ab54293"');
+        result.should.have.property('succeed', true);
+        result.storageResponse.should.have.property('ETag', '"eb733a00c0c9d336e65691a37ab54293"');
     });
     it('remove able to remove data on s3 bucket', async() => {
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.remove('testKey', {});
-        should.exist(result);
+        result.should.have.property('succeed', true);
     });
 
 
