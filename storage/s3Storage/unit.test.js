@@ -79,6 +79,16 @@ describe("s3 storage", function() {
         result.storageResponse.should.ownProperty('Body');
         should.equal(result.data.toString(), 'test data');
     });
+    it('get result has succeed === false when read key which does not exists', async() => {
+        let data = "test data";
+        let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
+        let result = await storage.get('testKeyFake', {});
+        result.should.have.property('succeed', false);
+        should.not.exist(result.storageResponse);
+        //should.not.exist(result.data);
+    });
+
+
     it('check able to check if key exists in s3 bucket', async() => {
         //let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);

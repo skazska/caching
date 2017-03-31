@@ -21,9 +21,16 @@ let defaultConfig = {
 function promiseOfs3Response (fn) {
     return Storage.promiseOf(
         fn,
-        function (resolveArgs) {
+        resolveArgs => {
             if (resolveArgs && resolveArgs.length)
             return [ Storage.result(true, resolveArgs[0], resolveArgs[0].Body) ];
+        },
+        err => {
+            if (err.code === 'NoSuchKey') {
+                return [ Storage.result(false, null, err) ];
+            } else {
+                return false;
+            }
         }
     );
 }
