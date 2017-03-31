@@ -11,21 +11,6 @@ const
     defaultConfig = {"return_buffers": true};
 
 
-/**
- * function returning promise of redis response with result converted to {Storage.result}<-TODO
- * @param fn {function} - an s3 method
- * @param params
- * @returns {Promise}
- */
-function promiseOfredisResponse (fn) {
-    return Storage.promiseOf(
-        fn,
-        function (resolveArgs) {
-            if (resolveArgs && resolveArgs.length)
-                return [ Storage.result(true, resolveArgs[0], resolveArgs[0].toString()) ];
-        }
-    );
-}
 
 /**
  * Class, representing Redis cache storage
@@ -47,52 +32,61 @@ class RedisStorage extends Storage {
     }
 
     _setNew (key, data, options) {
-        return promiseOfredisResponse((next) => {
-//        return Storage.promiseOf((next) => {
-            let args = [key, data];
-            if (options.ttl) {
-                args.push('PX');
-                args.push(options.ttl);
+        return Storage.promiseOf(
+            next => {
+                let args = [key, data];
+                if (options.ttl) {
+                    args.push('PX');
+                    args.push(options.ttl);
+                }
+                if (options.ifNotExists) {
+                    args.push('NX');
+                }
+                if (options.ifExists) {
+                    args.push('XX');
+                }
+                this.redis.set(args, next);
+            },
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(!!resolveArgs[0] && resolveArgs[0].toString() === 'OK', resolveArgs[0], null) ];
             }
-            if (options.ifNotExists) {
-                args.push('NX');
-            }
-            if (options.ifExists) {
-                args.push('XX');
-            }
-            this.redis.set(args, next);
-        });
+        );
     }
 
     _setOld (key, data, options) {
-        return promiseOfredisResponse((next) => {
-//        return Storage.promiseOf((next) => {
-            if (options.ifNotExists) {
-                this.redis.send_command('setnx', [key, data], (err, res) => {
-                    if (err) return next(err);
-                    if (options.ttl) {
-                        if (res) return this.redis.send_command('pexpire', [key, options.ttl], next);
-                    }
-                    next(null, 'OK');
-                });
-            } else if (options.ifExists) {
-                return next(new Error('ifExists is not supported by redis < 2.6.12'));
-                /* TODO emulation by revert handling of setnx try
-                this.redis.send_command('setnx', [key, data], (err, res) => {
-                    if (err) return next(err);
-                    if (options.ttl) {
-                        if (res) return this.redis.send_command('pexpire', [key, options.ttl], next);
-                    }
-                    next(null, 'OK');
-                });
-                */
-            } else if (options.ttl) {
-                this.redis.send_command('psetex', [key, options.ttl, data], next);
-            } else {
-                this.redis.set(key, data, next);
+        return Storage.promiseOf(
+            next => {
+                if (options.ifNotExists) {
+                    this.redis.send_command('setnx', [key, data], (err, res) => {
+                        if (err) return next(err);
+                        if (options.ttl) {
+                            if (res) return this.redis.send_command('pexpire', [key, options.ttl], next);
+                        }
+                        next(null, 'OK');
+                    });
+                } else if (options.ifExists) {
+                    return next(new Error('ifExists is not supported by redis < 2.6.12'));
+                    /* TODO emulation by revert handling of setnx try
+                    this.redis.send_command('setnx', [key, data], (err, res) => {
+                        if (err) return next(err);
+                        if (options.ttl) {
+                            if (res) return this.redis.send_command('pexpire', [key, options.ttl], next);
+                        }
+                        next(null, 'OK');
+                    });
+                    */
+                } else if (options.ttl) {
+                    this.redis.send_command('psetex', [key, options.ttl, data], next);
+                } else {
+                    this.redis.set(key, data, next);
+                }
+            },
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(resolveArgs[0].toString() === 'OK', resolveArgs[0], null) ];
             }
-
-        });
+        );
     }
 
 
@@ -143,7 +137,13 @@ class RedisStorage extends Storage {
     }
 
     get (key, options) {
-        return promiseOfredisResponse(this.redis.get.bind(this.redis, key));
+        return Storage.promiseOf(
+            this.redis.get.bind(this.redis, key),
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(!!resolveArgs[0], resolveArgs[0], resolveArgs[0] && resolveArgs[0].toString()) ];
+            }
+        );
         /*
         return Storage.promiseOf((next)=>{
             this.redis.get(key, next);
@@ -152,21 +152,23 @@ class RedisStorage extends Storage {
     }
 
     check (key, options) {
-        return promiseOfredisResponse(this.redis.exists.bind(this.redis, key));
-        /*
-        return Storage.promiseOf((next)=> {
-            this.redis.exists(key, next);
-        });
-        */
+        return Storage.promiseOf(
+            this.redis.exists.bind(this.redis, key),
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(resolveArgs[0] >= 1, resolveArgs[0], null) ];
+            }
+        );
     }
 
     remove (key, options) {
-        return promiseOfredisResponse(this.redis.del.bind(this.redis, key));
-        /*
-        return Storage.promiseOf((next)=> {
-            this.redis.del(key, next);
-        });
-        */
+        return Storage.promiseOf(
+            this.redis.del.bind(this.redis, key),
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(resolveArgs[0] >= 1, resolveArgs[0], null) ];
+            }
+        );
     }
 }
 

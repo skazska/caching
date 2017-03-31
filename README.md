@@ -24,7 +24,9 @@ works with:
     async function test() {
         try {
             let result = await cache.put('myData', 'Hi There', {ttl: 30000, ifNotExists: true});
-            if (result.toString() == 'OK') console.log('success')       
+            if (result.succeed) console.log('success');
+            result = await cache.get('myData');
+            if (result.succeed) console.log(result.data.toString());
         } catch(e) {
             console.error(e);
         }
@@ -42,7 +44,9 @@ works with:
     async function test() {
         try {
             let result = await cache.put('myData', 'Hi There', {});
-            if (!!result) console.log('success, ETag:', result.ETag);       
+            if (result.succeed) console.log('success');
+            result = await cache.get('myData');
+            if (result.succeed) console.log(result.data.toString());
         } catch(e) {
             console.error(e);
         }
