@@ -89,6 +89,19 @@ describe("s3 storage", function() {
     });
 
 
+    it('list able to get list of keys from redis, result have succeed===true and has storageResponse', async () => {
+        let data = "test data";
+        let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
+        let putResult = await storage.put('testKeyForList', data, {});
+        putResult.should.have.property('succeed', true);
+        let result = await storage.list('test', {});
+        result.should.have.property('succeed', true);
+        should.equal(result.data.length, 2);
+        result.data[1].should.equal('testKeyForList');
+        should.exist(result.storageResponse);
+    });
+
+
     it('check able to check if key exists in s3 bucket', async() => {
         //let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);

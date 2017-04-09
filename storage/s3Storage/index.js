@@ -139,6 +139,33 @@ class S3Storage extends Storage {
         return stream;
         */
     };
+
+    list (search, options) {
+        let params = {
+            Bucket: this.bucket,
+            Prefix: search /* required */
+            //Delimiter: 'STRING_VALUE',
+            //EncodingType: url,
+            //Marker: 'STRING_VALUE',
+            //MaxKeys: 0,
+            //RequestPayer: requester
+        };
+
+        //TODO convert options
+        Object.assign(params, options);
+        return Storage.promiseOf(
+            this.s3.listObjects.bind(this.s3, params),
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(
+                        true,
+                        resolveArgs[0],
+                        resolveArgs[0].Contents.map(item => { return item.Key })
+                    )];
+            }
+        );
+    };
+
     check (key, options) {
         let params = {
             Bucket: this.bucket,

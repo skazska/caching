@@ -6,6 +6,7 @@ Caching is to use s3 or redis storage services to cache data by key.
 Supports methods:
 * put - stores data by key
 * get - retrieves data by key
+* list - retrieves list of data keys
 * check - check if key has data in storage
 * remove - removes data by key
 
@@ -27,6 +28,8 @@ works with:
             if (result.succeed) console.log('success');
             result = await cache.get('myData');
             if (result.succeed) console.log(result.data.toString());
+            result = await cache.list('my*');
+            if (result.succeed) result.data.forEach(key => { console.log(key).toString() });
         } catch(e) {
             console.error(e);
         }
@@ -47,6 +50,8 @@ works with:
             if (result.succeed) console.log('success');
             result = await cache.get('myData');
             if (result.succeed) console.log(result.data.toString());
+            result = await cache.list('my');
+            if (result.succeed) result.data.forEach(key => { console.log(key).toString() });
         } catch(e) {
             console.error(e);
         }

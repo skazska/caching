@@ -73,6 +73,16 @@ class Storage {
     }
 
     /**
+     * get list of stored objects
+     * @param search
+     * @param options
+     * @returns {Promise}
+     */
+    list (search, options) {
+        return this._emptyMethod();
+    }
+
+    /**
      * get stored data by key
      * @abstract
      * @param {string} key

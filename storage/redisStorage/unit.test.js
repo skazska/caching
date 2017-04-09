@@ -98,6 +98,21 @@ describe("redis storage", function() {
         should.not.exist(result.storageResponse);
     });
 
+
+    it('list able to get list of keys from redis, result have succeed===true and has storageResponse', async () => {
+        let data = "test data";
+        let options = {};
+        let storage = new Storage('cache1', {}, redisCfg);
+        let putResult = await storage.put('testKeyForList', data, options);
+        putResult.should.have.property('succeed', true);
+        let result = await storage.list('test*', options);
+        result.should.have.property('succeed', true);
+        should.equal(result.data.length, 2);
+        result.data[1].should.equal('testKeyForList');
+        should.exist(result.storageResponse.length);
+    });
+
+
     it('check able to know if key exists in redis, result have succeed===true and has storageResponse', async () => {
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);

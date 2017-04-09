@@ -136,6 +136,20 @@ class RedisStorage extends Storage {
         });
     }
 
+    list (search, options) {
+        return Storage.promiseOf(
+            this.redis.keys.bind(this.redis, search),
+            resolveArgs => {
+                if (resolveArgs && resolveArgs.length)
+                    return [ Storage.result(
+                        !!resolveArgs[0],
+                        resolveArgs[0],
+                        resolveArgs[0].map(res => { return res.toString() })
+                    ) ];
+            }
+        );
+    }
+
     get (key, options) {
         return Storage.promiseOf(
             this.redis.get.bind(this.redis, key),

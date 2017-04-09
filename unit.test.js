@@ -15,7 +15,7 @@ describe("caching exports", function() {
         should.exist(Storage.Redis);
     });
 
-    it('should export S3Storage', () => {
+    it('should export S3Storage', async () => {
         should.exist(Storage.S3)
     });
 
