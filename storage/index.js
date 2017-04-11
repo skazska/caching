@@ -52,8 +52,8 @@ class Storage {
         });
     }
 
-    static result (succeed, storageResponse, data) {
-        return {succeed: succeed, storageResponse: storageResponse, data: data};
+    static result (success, storageResponse, data) {
+        return {success: success, storageResponse: storageResponse, data: data};
     }
 
     _emptyMethod () {

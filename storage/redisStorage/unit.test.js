@@ -50,12 +50,12 @@ describe("redis storage", function() {
     afterEach(() => {
     });
 
-    it('put able to put data to redis, result have succeed===true and has storageResponse', async () => {
+    it('put able to put data to redis, result have success===true and has storageResponse', async () => {
         let data = "test data";
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.put('testKey', data, options);
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.storageResponse.toString().should.equal('OK');
     });
 
@@ -64,7 +64,7 @@ describe("redis storage", function() {
         let options = {ifNotExists: true};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.put('testKey', data, options);
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
         should.not.exist(result.storageResponse);
     });
 
@@ -73,75 +73,86 @@ describe("redis storage", function() {
         let options = {ifExists: true};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.put('testKeyFake', data, options);
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
         should.not.exist(result.storageResponse);
     });
 
 
-    it('get able to get data from redis, result have succeed===true and has storageResponse', async () => {
+    it('get able to get data from redis, result have success===true and has storageResponse', async () => {
         let data = "test data";
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.get('testKey', options);
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.data.toString().should.equal(data);
         result.storageResponse.toString().should.equal(data);
     });
 
-    it('get result have succeed===false and has storageResponse if no such key', async () => {
+    it('get result have success===false and has storageResponse if no such key', async () => {
         let data = "test data";
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.get('testKeyFake', options);
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
         should.not.exist(result.data);
         should.not.exist(result.storageResponse);
     });
 
 
-    it('list able to get list of keys from redis, result have succeed===true and has storageResponse', async () => {
+    it('list able to get list of keys from redis, result have success===true and has storageResponse', async () => {
         let data = "test data";
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let putResult = await storage.put('testKeyForList', data, options);
-        putResult.should.have.property('succeed', true);
+        putResult.should.have.property('success', true);
         let result = await storage.list('test*', options);
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         should.equal(result.data.length, 2);
         result.data[1].should.equal('testKeyForList');
         should.exist(result.storageResponse.length);
     });
 
 
-    it('check able to know if key exists in redis, result have succeed===true and has storageResponse', async () => {
+    it('check able to know if key exists in redis, result have success===true and has storageResponse', async () => {
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.check('testKey', options);
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.storageResponse.should.equal(1);
     });
 
-    it('check result have succeed===false and has storageResponse if no such key', async () => {
+    it('check result have success===false and has storageResponse if no such key', async () => {
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.check('testKeyFake', options);
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
     });
 
-    it('remove able to remove data on redis, result have succeed===true and has storageResponse', async () => {
+    it('remove able to remove data on redis, result have success===true and has storageResponse', async () => {
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.remove('testKey', options);
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.storageResponse.should.equal(1);
     });
 
-    it('remove result has succeed === false when try remove key which not exists', async () => {
+    it('remove result has success === false when try remove key which not exists', async () => {
         let options = {};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.remove('testKeyFake', options);
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
         result.storageResponse.should.equal(0);
+    });
+
+    it('put & get jsObject', async () => {
+        let data = {key: "value"};
+        let options = {};
+        let storage = new Storage('cache1', {}, redisCfg);
+        let result = await storage.put('testKeyJS', data, options);
+        result.should.have.property('success', true);
+        result = await storage.get('testKeyJS', data, options);
+        result.should.have.property('success', true);
+
     });
 
     it('able to remove data set with ttl on redis', async function(){
@@ -150,14 +161,14 @@ describe("redis storage", function() {
         let options = {ttl: 2000};
         let storage = new Storage('cache1', {}, redisCfg);
         let result = await storage.put('testKey', data, options);
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
 
         result = await new Promise(resolve => {
             setTimeout(async () => {
                 resolve(await storage.get('testKey', options));
             }, 3000);
         });
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
         should.not.exist(result.data);
         should.not.exist(result.storageResponse);
     });

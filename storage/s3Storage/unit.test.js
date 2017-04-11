@@ -67,7 +67,7 @@ describe("s3 storage", function() {
         let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.put('testKey', data, {});
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.storageResponse.should.have.property('ETag', '"eb733a00c0c9d336e65691a37ab54293"');
     });
     
@@ -75,27 +75,27 @@ describe("s3 storage", function() {
         let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.get('testKey', {});
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.storageResponse.should.ownProperty('Body');
         should.equal(result.data.toString(), 'test data');
     });
-    it('get result has succeed === false when read key which does not exists', async() => {
+    it('get result has success === false when read key which does not exists', async() => {
         let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.get('testKeyFake', {});
-        result.should.have.property('succeed', false);
+        result.should.have.property('success', false);
         should.not.exist(result.storageResponse);
         //should.not.exist(result.data);
     });
 
 
-    it('list able to get list of keys from redis, result have succeed===true and has storageResponse', async () => {
+    it('list able to get list of keys from redis, result have success===true and has storageResponse', async () => {
         let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let putResult = await storage.put('testKeyForList', data, {});
-        putResult.should.have.property('succeed', true);
+        putResult.should.have.property('success', true);
         let result = await storage.list('test', {});
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         should.equal(result.data.length, 2);
         result.data[1].should.equal('testKeyForList');
         should.exist(result.storageResponse);
@@ -106,13 +106,13 @@ describe("s3 storage", function() {
         //let data = "test data";
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.check('testKey', {});
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
         result.storageResponse.should.have.property('ETag', '"eb733a00c0c9d336e65691a37ab54293"');
     });
     it('remove able to remove data on s3 bucket', async() => {
         let storage = new Storage( 'cache1', {Bucket: bucketName}, s3CfgPath);
         let result = await storage.remove('testKey', {});
-        result.should.have.property('succeed', true);
+        result.should.have.property('success', true);
     });
 
 

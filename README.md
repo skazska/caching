@@ -25,11 +25,11 @@ works with:
     async function test() {
         try {
             let result = await cache.put('myData', 'Hi There', {ttl: 30000, ifNotExists: true});
-            if (result.succeed) console.log('success');
+            if (result.success) console.log('success');
             result = await cache.get('myData');
-            if (result.succeed) console.log(result.data.toString());
+            if (result.success) console.log(result.data.toString());
             result = await cache.list('my*');
-            if (result.succeed) result.data.forEach(key => { console.log(key).toString() });
+            if (result.success) result.data.forEach(key => { console.log(key).toString() });
         } catch(e) {
             console.error(e);
         }
@@ -47,11 +47,11 @@ works with:
     async function test() {
         try {
             let result = await cache.put('myData', 'Hi There', {});
-            if (result.succeed) console.log('success');
+            if (result.success) console.log('success');
             result = await cache.get('myData');
-            if (result.succeed) console.log(result.data.toString());
+            if (result.success) console.log(result.data.toString());
             result = await cache.list('my');
-            if (result.succeed) result.data.forEach(key => { console.log(key).toString() });
+            if (result.success) result.data.forEach(key => { console.log(key).toString() });
         } catch(e) {
             console.error(e);
         }
