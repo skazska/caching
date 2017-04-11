@@ -53,7 +53,7 @@ class Storage {
     }
 
     static result (success, storageResponse, data) {
-        return {success: success, storageResponse: storageResponse, data: data};
+        return {success: success, data: data, storageResponse: storageResponse};
     }
 
     _emptyMethod () {
